@@ -61,7 +61,7 @@
     <tbody>
       {% for contract in filter.qs %}
         <tr>
-          <td>{{contract.company}}</td>
+          <td>{{ contract.company }}</td>
           <td>{{ contract.contract_type }}</td>
           <td>{{ contract.currency_type }}</td>
           <td>{{ contract.date_start }}</td>
@@ -73,6 +73,34 @@
           <td colspan="5">No data</td>
         </tr>
       {% endfor %}
+    </tbody>
+  </table>
+
+<h1>Master table</h1>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Contract type</th>
+        <th>Currency type</th>
+        <th>Day</th>
+<!--         <th>Start date</th>
+        <th>Contract value</th> -->
+      </tr>
+    </thead>
+    <tbody>
+          {% for contract in filter_monthly %}
+                <tr>
+                  <td>{{contract.company_name}}</td>
+                  <td>{{ contract.contract_type }}</td>
+                  <td>{{ contract.currency_type }}</td>
+                  <td>{{ contract.summed_value }}</td>
+                </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5">No data</td>
+            </tr>
+          {% endfor %}
     </tbody>
   </table>
 

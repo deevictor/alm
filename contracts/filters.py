@@ -11,3 +11,7 @@ class ContractFilter(django_filters.FilterSet):
     class Meta:
         model = Contract
         fields = ['company', 'contract_type', 'currency_type', 'date_start', 'date_end', 'contract_value']
+
+class ContractFilterMonthly(ContractFilter):
+    class Meta:
+        fields = ['company', 'contract_type', 'currency_type', 'date_start', 'date_end', 'contract_value']
