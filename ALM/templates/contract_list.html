@@ -40,6 +40,10 @@
             {% endfor %}
           </div>
         </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.date_end.label_tag }}
+          {% render_field filter.form.date_end class="form-control" %}
+        </div>
       </div>
       <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-search"></span> Search
@@ -80,10 +84,11 @@
   <table class="table table-bordered">
     <thead>
       <tr>
+        <th>range</th>
         <th>Company</th>
         <th>Contract type</th>
         <th>Currency type</th>
-        <th>Day</th>
+        <th>Total Value</th>
 <!--         <th>Start date</th>
         <th>Contract value</th> -->
       </tr>
@@ -91,9 +96,10 @@
     <tbody>
           {% for contract in filter_monthly %}
                 <tr>
-                  <td>{{contract.company_name}}</td>
-                  <td>{{ contract.contract_type }}</td>
-                  <td>{{ contract.currency_type }}</td>
+                  <td>{{ contract.month|date:"M, Y" }}</td>
+                  <td>{{ contract.company__name }}</td>
+                  <td>{{ contract.contract_type__contract_type }}</td>
+                  <td>{{ contract.currency_type__currency_type }}</td>
                   <td>{{ contract.summed_value }}</td>
                 </tr>
           {% empty %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from django.db.models import Count, Sum
-from django.db.models.functions import TruncMonth, TruncDay
+from django.db.models.functions import TruncMonth, TruncDay, ExtractWeek
 
 from .forms import ContractForm
 from .models import Contract
@@ -23,25 +23,33 @@ def contract_list(request):
 
     contract_filter = ContractFilter(request.GET, queryset=contract_list)
 
+    contract_filter_monthly = ContractFilter(request.GET, queryset=contract_list).qs.annotate(month=TruncMonth('date_end')).values('company__name', 'contract_type__contract_type', 'currency_type__currency_type','month').annotate(summed_value=Sum('contract_value')).order_by()
 
-    print(contract_list.filter(pk__in=[1, 2, 3]))
-    # print(contract_filter_monthly.qs)
+    contract_filter_weekly = ContractFilter(request.GET, queryset=contract_list).qs.annotate(month=TruncMonth('date_end'), week=ExtractWeek('date_end')).values('company__name', 'contract_type__contract_type', 'currency_type__currency_type','month').annotate(summed_value=Sum('contract_value')).order_by()
+
+
+    # print(contract_list.filter(pk__in=[]))
+    # print(contract_filter_monthly)
 
     # if request.method == "GET":
     #     qd = request.GET
-    #     company_id = qd.getlist('company')
-    #     contract_type_id = qd.getlist('contract_type')
-    #     currency_type_id = qd.getlist('currency_type')
-    #     # print(contract_type_id)
-    #     for contract in contract_list_monthly:
-    #         if contract
+    #     # company_id = qd.getlist('company')
+    #     # contract_type_id = qd.getlist('contract_type')
+    #     # currency_type_id = qd.getlist('currency_type')
+    #     d=qd.lists()
+    #     for key in d:
+    #         for value in key:
+    #             print(value)
+    #     # for contract in contract_list_monthly:
+    #     #     if contract
 
 
 
 
     context = {
         "contract_list": contract_list,
-        "filter_monthly": contract_list_monthly,
+        "filter_monthly": contract_filter_monthly,
+        "filter_weekly": contract_filter_weekly,
         "filter": contract_filter,
         "title": "Contract List"
     }
