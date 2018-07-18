@@ -11,7 +11,7 @@ class ContractFilter(django_filters.FilterSet):
     currency_type = django_filters.ModelMultipleChoiceFilter(queryset=Currency.objects.all(), widget=forms.CheckboxSelectMultiple)
     # year_range = django_filters.DateFromToRangeFilter(base_widget=RangeWidget(attrs={'placehoder': 'YYY/MM/DD'}), queryset=Contract.objects.all())
     date_end = django_filters.NumberFilter(name= 'date_end', lookup_expr='year')
-    date_end1 = django_filters.NumberFilter(name= 'date_end', lookup_expr='week')
+    date_range= django_filters.DateRangeFilter(name='')
 
     class Meta:
         model = Contract

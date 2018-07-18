@@ -83,14 +83,36 @@
 <h1>Master table</h1>
   <table class="table table-bordered">
     <thead>
+      {% for month in month_total_value_dict.keys %}
+        <th>{{ month }}</th>
+      {% empty %}
+        <th>
+          <th colspan="5">No data</th>
+        </th>
+      {% endfor %}
+    </thead>
+    <tbody>
+      {% for value in month_total_value_dict.values %}
+        <td>{{ value.monthly_value|default_if_none:0 }}</td>
+      {% empty %}
+        <tr>
+          <td colspan="5">No data</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+<h1>Details</h1>
+  <table class="table table-bordered">
+    <thead>
       <tr>
         <th>range</th>
         <th>Company</th>
         <th>Contract type</th>
         <th>Currency type</th>
         <th>Total Value</th>
-<!--         <th>Start date</th>
-        <th>Contract value</th> -->
       </tr>
     </thead>
     <tbody>
