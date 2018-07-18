@@ -1,30 +1,13 @@
 from django import forms
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 from .models import Contract, Company, Contract_type, Currency
 
-class ContractForm(forms.ModelForm):
-    class Meta:
-        model = Contract
-        fields = [
-            "company",
-            "contract_type",
-            "currency_type",
-            "date_start",
-            "date_end",
-            "contract_value"
-        ]
+class SearchForm(forms.Form):
+    company= forms.ModelMultipleChoiceField(queryset=Company.objects.all(), widget=forms.CheckboxSelectMultiple, label="Компания")
+    contract_type= forms.ModelMultipleChoiceField(queryset=Contract_type.objects.all(), widget=forms.CheckboxSelectMultiple, label="Тип договора")
+    currency_type= forms.ModelMultipleChoiceField(queryset=Currency.objects.all(), widget=forms.CheckboxSelectMultiple, label="Тип валюты")
+    selected_year = forms.IntegerField(required=False, label="Год")
 
-class Company(forms.ModelForm):
-    class Meta:
-        model = Company
-        fields = ["name"]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-class Contract_type(forms.ModelForm):
-    class Meta:
-        model = Contract_type
-        fields = ["contract_type"]
-
-class Currency(forms.ModelForm):
-    class Meta:
-        model = Currency
-        fields = ["currency_type"]

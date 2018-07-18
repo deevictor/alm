@@ -32,6 +32,7 @@ class Contract(models.Model):
     date_end = models.DateField(default=datetime.date.today)
     contract_value = models.DecimalField(max_digits=20, decimal_places=2)
 
+
     def __int__(self):
         return self.id
 

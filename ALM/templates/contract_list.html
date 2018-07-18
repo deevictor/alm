@@ -7,128 +7,45 @@
 <h1>{{ title }}</h1>
 
   <form method="get">
-    <div class="well">
-      <h4 style="margin-top: 0">Filter</h4>
-      <div class="row">
-        <div class="form-group col-sm-8 col-md-6">
-          {{ filter.form.company.label_tag }}
-          <div>
-            {% for choice in filter.form.company %}
-              <label class="checkbox-inline">
-                {{ choice.tag }} {{ choice.choice_label }}
-              </label>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="form-group col-sm-8 col-md-6">
-          {{ filter.form.contract_type.label_tag }}
-          <div>
-            {% for choice in filter.form.contract_type %}
-              <label class="checkbox-inline">
-                {{ choice.tag }} {{ choice.choice_label }}
-              </label>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="form-group col-sm-8 col-md-6">
-          {{ filter.form.currency_type.label_tag }}
-          <div>
-            {% for choice in filter.form.currency_type %}
-              <label class="checkbox-inline">
-                {{ choice.tag }} {{ choice.choice_label }}
-              </label>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="form-group col-sm-4 col-md-3">
-          {{ filter.form.date_end.label_tag }}
-          {% render_field filter.form.date_end class="form-control" %}
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary">
-        <span class="glyphicon glyphicon-search"></span> Search
-      </button>
-    </div>
+    {{ form.as_p }}
+    <button type="submit">Поиск</button>
   </form>
 
+<h1>Мастер таблица</h1>
   <table class="table table-bordered">
     <thead>
       <tr>
-        <th>Company</th>
-        <th>Contract type</th>
-        <th>Currency type</th>
-        <th>Start date</th>
-        <th>End date</th>
-        <th>Contract value</th>
+        <th>Организация</th>
+        <th>Валюта</th>
+        <th>Тип Контракта</th>
+        {% if monthly_contract_dict|length > 0 %}
+          {% for month in monthly_contract_dict.keys %}
+            <th>{{ month }}</th>
+          {% endfor %}
+        {% endif %}
       </tr>
     </thead>
     <tbody>
-      {% for contract in filter.qs %}
+      {% for contract in contract_list %}
         <tr>
           <td>{{ contract.company }}</td>
           <td>{{ contract.contract_type }}</td>
           <td>{{ contract.currency_type }}</td>
-          <td>{{ contract.date_start }}</td>
-          <td>{{ contract.date_end }}</td>
-          <td>{{ contract.contract_value }}</td>
+          {% if monthly_contract_dict|length > 0 %}
+            {% for qs in monthly_contract_dict.values %}
+              {% if contract in qs %}
+                <td>{{ contract.contract_value }}</td>
+              {% else %}
+                <td>0</td>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         </tr>
-      {% empty %}
-        <tr>
-          <td colspan="5">No data</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-<h1>Master table</h1>
-  <table class="table table-bordered">
-    <thead>
-      {% for month in month_total_value_dict.keys %}
-        <th>{{ month }}</th>
-      {% empty %}
-        <th>
-          <th colspan="5">No data</th>
-        </th>
-      {% endfor %}
-    </thead>
-    <tbody>
-      {% for value in month_total_value_dict.values %}
-        <td>{{ value.monthly_value|default_if_none:0 }}</td>
-      {% empty %}
-        <tr>
-          <td colspan="5">No data</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
-
-
-<h1>Details</h1>
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>range</th>
-        <th>Company</th>
-        <th>Contract type</th>
-        <th>Currency type</th>
-        <th>Total Value</th>
-      </tr>
-    </thead>
-    <tbody>
-          {% for contract in filter_monthly %}
-                <tr>
-                  <td>{{ contract.month|date:"M, Y" }}</td>
-                  <td>{{ contract.company__name }}</td>
-                  <td>{{ contract.contract_type__contract_type }}</td>
-                  <td>{{ contract.currency_type__currency_type }}</td>
-                  <td>{{ contract.summed_value }}</td>
-                </tr>
-          {% empty %}
-            <tr>
-              <td colspan="5">No data</td>
-            </tr>
-          {% endfor %}
+        {% empty %}
+          <tr>
+            <td colspan="3">Нет контрактов</td>
+          </tr>
+        {% endfor %}
     </tbody>
   </table>
 

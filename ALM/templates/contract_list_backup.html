@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+<!-- {% load render_table from django_tables2 %} -->
+{% load widget_tweaks %}
+
+{% block content %}
+
+<h1>{{ title }}</h1>
+
+  <form method="get">
+    <div class="well">
+      <h4 style="margin-top: 0">Filter</h4>
+      <div class="row">
+        <div class="form-group col-sm-8 col-md-6">
+          {{ filter.form.company.label_tag }}
+          <div>
+            {% for choice in filter.form.company %}
+              <label class="checkbox-inline">
+                {{ choice.tag }} {{ choice.choice_label }}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="form-group col-sm-8 col-md-6">
+          {{ filter.form.contract_type.label_tag }}
+          <div>
+            {% for choice in filter.form.contract_type %}
+              <label class="checkbox-inline">
+                {{ choice.tag }} {{ choice.choice_label }}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="form-group col-sm-8 col-md-6">
+          {{ filter.form.currency_type.label_tag }}
+          <div>
+            {% for choice in filter.form.currency_type %}
+              <label class="checkbox-inline">
+                {{ choice.tag }} {{ choice.choice_label }}
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="form-group col-sm-4 col-md-3">
+          {{ filter.form.selected_year.label_tag }}
+          {% render_field filter.form.selected_year class="form-control" %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span> Search
+      </button>
+    </div>
+  </form>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Company</th>
+        <th>Contract type</th>
+        <th>Currency type</th>
+        <th>Start date</th>
+        <th>End date</th>
+        <th>Contract value</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for contract in filter.qs %}
+        <tr>
+          <td>{{ contract.company }}</td>
+          <td>{{ contract.contract_type }}</td>
+          <td>{{ contract.currency_type }}</td>
+          <td>{{ contract.date_start }}</td>
+          <td>{{ contract.date_end }}</td>
+          <td>{{ contract.contract_value }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5">No data</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+<h1>Master table</h1>
+  <table class="table table-bordered">
+    <thead>
+      {% for month in month_total_value_dict.keys %}
+        <th>{{ month }}</th>
+      {% empty %}
+        <th>
+          <th colspan="5">No data</th>
+        </th>
+      {% endfor %}
+    </thead>
+    <tbody>
+      {% for value in month_total_value_dict.values %}
+        <td>{{ value.monthly_value|default_if_none:0 }}</td>
+      {% empty %}
+        <tr>
+          <td colspan="5">No data</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+<h1>Details</h1>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>range</th>
+        <th>Company</th>
+        <th>Contract type</th>
+        <th>Currency type</th>
+        <th>Total Value</th>
+      </tr>
+    </thead>
+    <tbody>
+          {% for contract in filter_monthly %}
+                <tr>
+                  <td>{{ contract.month|date:"M, Y" }}</td>
+                  <td>{{ contract.company__name }}</td>
+                  <td>{{ contract.contract_type__contract_type }}</td>
+                  <td>{{ contract.currency_type__currency_type }}</td>
+                  <td>{{ contract.summed_value }}</td>
+                </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5">No data</td>
+            </tr>
+          {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock content %}
