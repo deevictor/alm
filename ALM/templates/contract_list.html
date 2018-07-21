@@ -49,4 +49,74 @@
     </tbody>
   </table>
 
+<h1>Аггрегированные помесячно данные</h1>
+  <table class="table table-bordered" id="aggr_table">
+    <thead>
+        <tr>
+          {% for month in monthly_contract_dict_total.keys %}
+            <th>{{ month }}</th>
+          {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+          {% for value in monthly_contract_dict_total.values %}
+            <td>{{ value.monthly_value|default_if_none:0 }}</td>
+          {% endfor %}
+        </tr>
+    </tbody>
+  </table>
+
+
+<!--   <table class="table table-bordered" id="details_table">
+  </table> -->
+<div id="table_ct"></div>
+
 {% endblock content %}
+
+
+{% block script %}
+
+{{ block.super }}
+<script>
+$(document).ready(function(){
+  $("#aggr_table").on("click", "td", function(){
+    $("#table_ct").html(details_table);
+  });
+
+var details_table = $('<table>').addClass('table table-bordered');
+var head = $('<thead>').html('<tr><th>Oranisation</th><th>Contract</th><th>Curency</th><th>Price</th></tr>');
+details_table.append(head)
+
+for(i=0; i<3; i++){
+  var row = $('<tr>').append($('<td>').text('result '+ i));
+  details_table.append(row)
+}
+// var p_obj = '{{ monthly_contract_dict|escapejs }}'
+
+// console.log(p_obj)
+
+  // event.preventDefault();
+
+  $.ajax({
+    type: 'GET',
+    url: '/contracts/monthly',
+    data: {
+      foo: 'foo_value_changed',
+    },
+    success: handleSuccess,
+    error: handleError,
+  });
+  function handleSuccess(data){
+    console.log(data);
+  }
+  function handleError(ThrowError){
+    console.log(ThrowError);
+  }
+
+});
+</script>
+
+{% endblock script %}
+
+

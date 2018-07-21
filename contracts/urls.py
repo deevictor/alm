@@ -21,4 +21,5 @@ app_name = 'contracts'
 
 urlpatterns = [
     path('', contracts_views.contract_list, name='list'),
+    path('monthly/', contracts_views.get_contracts, name='show_me')
 ]
