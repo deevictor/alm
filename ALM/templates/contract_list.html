@@ -102,7 +102,8 @@ for(i=0; i<3; i++){
     type: 'GET',
     url: '/contracts/monthly',
     data: {
-      foo: 'foo_value_changed',
+      selected_year: $('#year_id').val(),
+      selected_month: $('#month_id1').attr('id')
     },
     success: handleSuccess,
     error: handleError,

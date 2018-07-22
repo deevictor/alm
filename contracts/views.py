@@ -55,9 +55,16 @@ def contract_list(request):
 
 def get_contracts(request):
     if request.method == 'GET':
-        name = request.GET['foo']
-        print(name)
-        data = {}
-        data['returned_name'] = name
+        selected_year = request.GET.get('selected_year', None)
+        selected_month = request.GET.get('selected_month', None)
+        # print(name)
+        # data = {}
+        # data['returned_name'] = name
+        data = {
+            'selected_year': selected_year,
+            'selected_month': selected_month,
+            'added_attr': "bla bla bla"
+        }
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    # return HttpResponse(json.dumps(data), content_type="application/json")
+    return JsonResponse(data)
