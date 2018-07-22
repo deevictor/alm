@@ -61,7 +61,7 @@
     <tbody>
         <tr>
           {% for value in monthly_contract_dict_total.values %}
-            <td>{{ value.monthly_value|default_if_none:0 }}</td>
+            <td id="month_id{{ forloop.counter }}">{{ value.monthly_value|default_if_none:0 }}</td>
           {% endfor %}
         </tr>
     </tbody>
