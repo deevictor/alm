@@ -7,6 +7,9 @@ import datetime
 class Company(models.Model):
     name = models.CharField(max_length = 60)
 
+    def natural_key(self):
+        return(self.name)
+
     def __str__(self):
         return self.name
 
@@ -14,12 +17,18 @@ class Contract_type(models.Model):
 
     contract_type = models.CharField(max_length = 60)
 
+    def natural_key(self):
+        return(self.contract_type)
+
     def __str__(self):
         return self.contract_type
 
 class Currency(models.Model):
 
     currency_type = models.CharField(max_length = 60)
+
+    def natural_key(self):
+        return(self.currency_type)
 
     def __str__(self):
         return self.currency_type

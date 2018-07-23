@@ -6,11 +6,19 @@ from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.core import serializers
 from django.http import HttpResponse, JsonResponse
+from rest_framework import serializers as r_serializers
+from rest_framework.renderers import JSONRenderer
 
 from .forms import SearchForm
 from .models import Contract
 
 # Create your views here.
+
+class ContractSerializer(r_serializers.ModelSerializer):
+    class Meta:
+        model = Contract
+        fields = ('company', 'contract_type', 'currency_type', 'contract_value')
+        # depth = 1
 
 def contract_list(request):
     contract_list = Contract.objects.all()
@@ -24,6 +32,7 @@ def contract_list(request):
                 contract_list = Contract.objects.filter(**{lookup:attr_listid})
 
     monthly_contract_dict = {}
+    monthly_contract_dict_js = {}
     monthly_contract_dict_total = {}
     if qd.get('selected_year'):
         selected_year = int(qd.get('selected_year'))
@@ -38,8 +47,21 @@ def contract_list(request):
             monthly_contract_dict[month_name] = month_contractobj_qs
 
             monthly_contract_dict_total[month_name] = month_contractobj_qs.aggregate(monthly_value=Sum('contract_value'))
-        # print(monthly_contract_dict)
-        # monthly_contract_dict_js = serializers.serialize("json", monthly_contract_dict)
+            # print(month_contractobj_qs)
+            monthly_contract_dict_js['month_id'+str(month_number)] = serializers.serialize("json", month_contractobj_qs, fields=('company', 'contract_type', 'currency_type', 'contract_value'), use_natural_foreign_keys=True)
+
+            # monthly_contract_dict_js[month_name] = month_contractobj_qs.values('company__name', 'contract_type__contract_type', 'currency_type__currency_type', 'contract_value')
+
+
+            # py_list = ContractSerializer(month_contractobj_qs, many=True)
+            # json_list = JSONRenderer().render(py_list.data)
+            # monthly_contract_dict_js['month_id'+str(month_number)] = json_list
+
+
+        # monthly_contract_dict_js = ContractSerializer()
+        # monthly_contract_dict_js = JSONRenderer().render(monthly_contract_dict_js)
+        json_dict = json.dumps(monthly_contract_dict_js)
+        print(json_dict)
 
     form = SearchForm(request.GET or None)
     context = {
@@ -47,7 +69,8 @@ def contract_list(request):
         "form": form,
         "contract_list": contract_list,
         "monthly_contract_dict": monthly_contract_dict,
-        # "monthly_contract_dict_js": monthly_contract_dict_js,
+        "monthly_contract_dict_js": monthly_contract_dict_js,
+        "json_dict": json_dict,
         "monthly_contract_dict_total": monthly_contract_dict_total
     }
 
@@ -56,15 +79,12 @@ def contract_list(request):
 def get_contracts(request):
     if request.method == 'GET':
         selected_year = request.GET.get('selected_year', None)
-        selected_month = request.GET.get('selected_month', None)
-        # print(name)
-        # data = {}
-        # data['returned_name'] = name
+        month_number = request.GET.get('selected_month', None)
+
+
         data = {
             'selected_year': selected_year,
-            'selected_month': selected_month,
-            'added_attr': "bla bla bla"
+            'selected_month': month_number,
         }
 
-    # return HttpResponse(json.dumps(data), content_type="application/json")
     return JsonResponse(data)
