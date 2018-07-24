@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-<!-- {% load render_table from django_tables2 %} -->
 {% load widget_tweaks %}
 
 {% block content %}
@@ -48,8 +47,9 @@
         {% endfor %}
     </tbody>
   </table>
-
+{% if monthly_contract_dict|length > 0 %}
 <h1>Аггрегированные помесячно данные</h1>
+{% endif %}
   <table class="table table-bordered" id="aggr_table">
     <thead>
         <tr>
@@ -66,10 +66,7 @@
         </tr>
     </tbody>
   </table>
-<!-- {{ monthly_contract_dict_js.8|escapejs }} -->
 
-<!--   <table class="table table-bordered" id="details_table">
-  </table> -->
 <div id="table_ct"></div>
 
 {% endblock content %}
@@ -81,37 +78,24 @@
 <script>
 $(document).ready(function(){
   $("#aggr_table").on("click", "td", function(){
-    // $.ajax({
-    //   type: 'GET',
-    //   url: '/contracts/monthly',
-    //   data: {
-    //     selected_year: $('#year_id').val(),
-    //     selected_month: $(this).attr('id')
-    //   },
-    //   success: handleSuccess,
-    //   error: handleError,
-    // });
-    // function handleSuccess(data){
-    //   console.log(data);
-    // }
-    // function handleError(ThrowError){
-    //   console.log(ThrowError);
-    // }
+
     var month_id_selected = $(this).attr('id')
-    console.log(month_id_selected)
 
     var contracts = {};
 
     var js_obj_dict = JSON.parse('{{ json_dict|escapejs }}')
-    // function setContracts(js_obj_dict){
     for (var month_id in js_obj_dict) {
       contracts[month_id] = JSON.parse(js_obj_dict[month_id]);
     }
 
     contracts_month = contracts[month_id_selected]
-    console.log(contracts_month)
 
     $("#table_ct").html(build_details_table(contracts_month));
+
+    $('html, body').animate({
+      scrollTop: $("#aggr_table").offset().top
+    }, 'slow');
+
 
 
   });
@@ -119,7 +103,7 @@ $(document).ready(function(){
   function build_details_table(contracts_array) {
     if (contracts_array.length != 0) {
       var details_table = $('<table>').addClass('table table-bordered');
-      var head = $('<thead>').html('<tr><th>Oranisation</th><th>Contract</th><th>Curency</th><th>Price</th></tr>');
+      var head = $('<thead>').html('<tr><th>Организация</th><th>Тип контракта</th><th>Валюта</th><th>Сумма контракта</th></tr>');
       details_table.append(head)
 
       for(var i=0; i<contracts_array.length; i++){
@@ -133,28 +117,6 @@ $(document).ready(function(){
     }
     else {return ''}
   }
-// var p_obj_list = JSON.parse('{{ monthly_contract_dict_js.month_id8|escapejs }}')
-// var p_obj = p_obj_list[1].fields.company
-// var too = "monthly_contract_dict_js."+"month_id8"+"|escapejs"
-// var foo = '{{ '+too+' }}'
-
-// var contracts = {};
-
-// var js_obj_dict = JSON.parse('{{ json_dict|escapejs }}')
-// // function setContracts(js_obj_dict){
-// for (var month_id in js_obj_dict) {
-//   contracts[month_id] = JSON.parse(js_obj_dict[month_id]);
-// }
-
-// }
-// var p_obj = js_obj_dict.month_id8
-// var p_obj1 = JSON.parse(p_obj)
-
-// setContracts.call(js_obj_dict)
-
-// console.log(contracts)
-
-  // event.preventDefault();
 
 });
 </script>

@@ -39,7 +39,7 @@ class Contract(models.Model):
     currency_type = models.ForeignKey(Currency, on_delete=models.CASCADE)
     date_start= models.DateField(default=datetime.date.today)
     date_end = models.DateField(default=datetime.date.today)
-    contract_value = models.DecimalField(max_digits=20, decimal_places=2)
+    contract_value = models.DecimalField(max_digits=20, decimal_places=0)
 
 
     def __int__(self):
