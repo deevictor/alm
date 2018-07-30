@@ -21,4 +21,5 @@ app_name = 'contracts'
 
 urlpatterns = [
     path('', contracts_views.contract_list, name='list'),
+    # path('', contracts_views.Contract_listView.as_view(), name='list'),
 ]

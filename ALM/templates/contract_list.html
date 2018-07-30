@@ -1,13 +1,14 @@
 {% extends "base.html" %}
-{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load staticfiles %}
+
 
 {% block content %}
 
 <h1>{{ title }}</h1>
 
-  <form method="get">
-    {{ form.as_p }}
-    <button type="submit">Поиск</button>
+  <form>
+    {% crispy form form.helper %}
   </form>
 
 <h1>Мастер таблица</h1>
@@ -73,54 +74,9 @@
 
 
 {% block script %}
-
 {{ block.super }}
 <script>
-$(document).ready(function(){
-  $("#aggr_table").on("click", "td", function(){
-
-    var month_id_selected = $(this).attr('id')
-
-    var contracts = {};
-
-    var js_obj_dict = JSON.parse('{{ json_dict|escapejs }}')
-    for (var month_id in js_obj_dict) {
-      contracts[month_id] = JSON.parse(js_obj_dict[month_id]);
-    }
-
-    contracts_month = contracts[month_id_selected]
-
-    $("#table_ct").html(build_details_table(contracts_month));
-
-    $('html, body').animate({
-      scrollTop: $("#aggr_table").offset().top
-    }, 'slow');
-
-
-
-  });
-
-  function build_details_table(contracts_array) {
-    if (contracts_array.length != 0) {
-      var details_table = $('<table>').addClass('table table-bordered');
-      var head = $('<thead>').html('<tr><th>Организация</th><th>Тип контракта</th><th>Валюта</th><th>Сумма контракта</th></tr>');
-      details_table.append(head)
-
-      for(var i=0; i<contracts_array.length; i++){
-        var row = $('<tr>')
-        for (var arg in contracts_array[i].fields) {
-          row.append($('<td>').text(contracts_array[i].fields[arg]));
-        }
-        details_table.append(row)
-      }
-      return details_table;
-    }
-    else {return ''}
-  }
-
-});
+  var json_dict = "{{ json_dict|escapejs }}"
 </script>
-
+<script src="{% static 'js/contracts.js' %}"></script>
 {% endblock script %}
-
-
