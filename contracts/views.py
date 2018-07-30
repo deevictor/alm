@@ -22,7 +22,7 @@ def contract_list(request):
             if qd.get(attr):
                 attr_listid = qd.getlist(attr)
                 lookup = attr+'__in'
-                contract_list = Contract.objects.filter(**{lookup:attr_listid})
+                contract_list = contract_list.filter(**{lookup:attr_listid})
         # contract_list2 = contract_list.values(*attr_list).annotate(monthly_value=Sum('contract_value')).order_by('company')
         # print(contract_list2)
 
@@ -62,15 +62,15 @@ def contract_list(request):
     return render(request, "contract_list.html", context)
 ##################################################################
 class Contract_listView(View):
-    def get(self, request):
+    def get(self, request, *args, **kwargs):
         contract_list = Contract.objects.all()
         qd = request.GET
-        attr_list = ['company__name', 'contract_type__contract_type', 'currency_type__currency_type']
+        attr_list = ['company', 'contract_type', 'currency_type']
         for attr in attr_list:
             if qd.get(attr):
                 attr_listid = qd.getlist(attr)
                 lookup = attr+'__in'
-                contract_list = Contract.objects.filter(**{lookup:attr_listid})
+                contract_list = contract_list.filter(**{lookup:attr_listid})
         # contract_list2 = contract_list.values(*attr_list).annotate(monthly_value=Sum('contract_value')).order_by('company')
         # print(contract_list2)
 
@@ -96,8 +96,9 @@ class Contract_listView(View):
 
             json_dict = json.dumps(monthly_contract_dict_js)
         # print(monthly_contract_dict_total)
-
         form = SearchForm(request.GET or None)
+
+        print(request.GET)
         context = {
             "title": "Контракты",
             "form": form,
