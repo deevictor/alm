@@ -1,0 +1,15 @@
+/*h1 {
+    color: #66ff33;
+}*/
+
+.help-block {
+    display: none;
+}
+
+.asteriskField {
+    display: none;
+}
+
+td, th {
+    text-align: center;
+}
